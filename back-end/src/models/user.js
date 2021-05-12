@@ -10,6 +10,13 @@ const userSchema = new mongoose.Schema(
       min: 3,
       max: 20,
     },
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+      min: 3,
+      max: 20,
+    },
     username: {
       type: String,
       required: true,
@@ -25,32 +32,33 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    hashPassword: {
+    hash_password: {
       type: String,
       required: true,
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "admin",
+      enum: ["user", "admin", "super-admin"],
+      default: "user",
     },
-    contactNumber: {
-      type: String,
-    },
-    profilePicture: {
-      type: String,
-    },
+    contactNumber: { type: String },
+    pofilePicture: { type: String },
   },
   { timestamps: true }
 );
 
-userSchema.virtual("password").set((password) => {
-  this.hashPassword = bcrypt.hashSync(password, 10);
+userSchema.virtual("password").set(function (password) {
+  this.hash_password = bcrypt.hashSync(password, 10);
 });
 
+// userSchema.virtual("fullName").get(function () {
+//   return `${this.firstName} ${this.lastName}`;
+// });
+
 userSchema.methods = {
-  authenticate: (plainPassword) => {
-    return bcrypt.compareSync(plainPassword, this.hashPassword);
+  authenticate: async function (password) {
+    return await bcrypt.compare(password, this.hash_password);
   },
 };
+
 module.exports = mongoose.model("User", userSchema);
