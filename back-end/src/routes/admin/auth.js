@@ -5,10 +5,15 @@ const {
   signIn,
   requiresSignIn,
 } = require("../../controllers/admin/auth");
+const {
+  validateSignUpRequest,
+  validateSignInRequest,
+  isRequestValidated,
+} = require("../../validators/auth");
 
-router.post("/sign-up", signUp);
+router.post("/sign-up", validateSignUpRequest, isRequestValidated, signUp);
 
-router.post("/sign-in", signIn);
+router.post("/sign-in", validateSignInRequest, isRequestValidated, signIn);
 
 router.get("/profile", requiresSignIn, (req, res) => {
   console.log(req.user);
