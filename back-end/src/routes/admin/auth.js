@@ -1,10 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const {
-  signUp,
-  signIn,
-  requiresSignIn,
-} = require("../../controllers/admin/auth");
+const { signUp, signIn } = require("../../controllers/admin/auth");
+const { requiresSignIn } = require("../../middlewares");
 const {
   validateSignUpRequest,
   validateSignInRequest,

@@ -57,12 +57,16 @@ module.exports.signIn = (req, res) => {
     }
 
     if (user.authenticate(req.body.password)) {
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign(
+        { _id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
 
       const { _id, firstName, lastName, email, role, fullName } = user;
-      return res.status(200).json({
+      return res.status(201).json({
         token,
         user: {
           _id,
@@ -79,11 +83,4 @@ module.exports.signIn = (req, res) => {
       });
     }
   });
-};
-
-module.exports.requiresSignIn = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const user_id = jwt.verify(token, process.env.JWT_SECRET);
-  req.user = user_id;
-  next();
 };
